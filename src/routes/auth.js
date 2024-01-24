@@ -61,12 +61,8 @@ router.post("/login", async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid Credentials!" });
     }
-
-    /* Generate JWT token */
-    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
-    delete user.password;
-
-    res.status(200).json({ token, user });
+    delete user.password
+    res.status(200).json({ user, success: true });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: err.message });

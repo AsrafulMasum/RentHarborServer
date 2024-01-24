@@ -3,13 +3,15 @@ const express = require("express");
 const { middlewares } = require("./src/middlewares/defaultMiddlewares");
 const connectDB = require("./src/db/connectDB");
 const userApi = require("./src/routes/auth");
+const tokenApi = require("./src/routes/token");
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 middlewares(app);
 
-app.use("/auth", userApi)
+app.use(tokenApi);
+app.use("/auth", userApi);
 
 app.get("/health", (req, res) => {
   res.send("server is running data will be appear soon...");

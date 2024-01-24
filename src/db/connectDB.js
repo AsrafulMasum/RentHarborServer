@@ -14,7 +14,9 @@ const getURI = () => {
 const connectDB = async () => {
   const mongoURI = getURI();
   try {
-    await mongoose.connect(mongoURI);
+    await mongoose.connect(mongoURI, {
+      dbName: "RentHarbor",
+    });
     console.log("DB Connected Successfully✅");
   } catch (error) {
     console.log(error.name, error.message);
