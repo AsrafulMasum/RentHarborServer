@@ -35,7 +35,7 @@ router.post("/register", async (req, res) => {
     /* Send a successful message */
     res
       .status(200)
-      .json({ message: "User registered successfully!", success: true});
+      .json({ message: "User registered successfully!", success: true });
   } catch (err) {
     console.log(err);
     res
@@ -61,8 +61,20 @@ router.post("/login", async (req, res) => {
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid Credentials!" });
     }
-    delete user.password
+    delete user.password;
     res.status(200).json({ user, success: true });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+});
+
+// GETTING USER DATA
+router.get("/user/:id", async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId);
+    res.status(200).json({ user });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: err.message });

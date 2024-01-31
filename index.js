@@ -10,7 +10,7 @@ const port = process.env.PORT || 3000;
 
 middlewares(app);
 
-app.use(tokenApi);
+app.use("/token", tokenApi);
 app.use("/auth", userApi);
 
 app.get("/health", (req, res) => {
