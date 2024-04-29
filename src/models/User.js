@@ -26,7 +26,10 @@ const UserSchema = new mongoose.Schema(
     role: {
       type: String,
       required: true,
-
+    },
+    phone: {
+      type: Number,
+      required: true,
     },
     tripList: {
       type: Array,

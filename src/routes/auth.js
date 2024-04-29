@@ -8,7 +8,8 @@ const User = require("../models/User");
 router.post("/register", async (req, res) => {
   try {
     /* Take all information from the form */
-    const { firstName, lastName, email, password, photo_url, role } = req.body;
+    const { firstName, lastName, email, password, photo_url, role, phone } =
+      req.body;
 
     /* Check if user exists */
     const existingUser = await User.findOne({ email });
@@ -28,6 +29,7 @@ router.post("/register", async (req, res) => {
       password: hashedPassword,
       photo_url,
       role,
+      phone,
     });
 
     /* Save the new User */
