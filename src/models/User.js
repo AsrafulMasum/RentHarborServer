@@ -23,6 +23,11 @@ const UserSchema = new mongoose.Schema(
       type: String,
       default: "",
     },
+    role: {
+      type: String,
+      required: true,
+
+    },
     tripList: {
       type: Array,
       default: [],
