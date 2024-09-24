@@ -6,7 +6,7 @@ const { LOCAL_CLIENT, PRODUCTION_CLIENT } = require("../config/config");
 const middlewares = (app) => {
   app.use(
     cors({
-      origin: [LOCAL_CLIENT, PRODUCTION_CLIENT],
+      origin: ["http://localhost:5173"],
       credentials: true,
     })
   );

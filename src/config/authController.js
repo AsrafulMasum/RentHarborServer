@@ -3,16 +3,20 @@ require("dotenv").config();
 
 const createTokenController = (req, res) => {
   const user = req.body;
-  const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-    expiresIn: "1h",
-  });
-  res
-    .cookie("token", token, {
-      httpOnly: true,
-      secure: true,
-      sameSite: "none",
-    })
-    .send({ success: true });
+  try {
+    const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: "1h",
+    });
+    res
+      .cookie("token", token, {
+        httpOnly: true,
+        secure: true,
+        sameSite: "none",
+      })
+      .send({ success: true });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 const clearTokenController = (req, res) => {
