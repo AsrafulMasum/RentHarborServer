@@ -6,7 +6,7 @@ const { LOCAL_CLIENT, PRODUCTION_CLIENT } = require("../config/config");
 const middlewares = (app) => {
   app.use(
     cors({
-      origin: ["http://localhost:5173"],
+      origin: ["http://localhost:5173", "https://rentharbor.netlify.app"],
       credentials: true,
     })
   );
