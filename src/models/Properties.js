@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 
-const PropertySchema = new mongoose.Schema(
+const PropertiesSchema = new mongoose.Schema(
   {
     title: {
       type: String,
@@ -78,5 +78,5 @@ const PropertySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-const Property = mongoose.model("Property", PropertySchema);
-module.exports = Property;
+const Properties = mongoose.model("Properties", PropertiesSchema);
+module.exports = Properties;
