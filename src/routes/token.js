@@ -1,4 +1,4 @@
-const { createTokenController, clearTokenController } = require("../config/authController");
+const { createTokenController, clearTokenController } = require("../controllers/tokenController");
 
 const router = require("express").Router();
 
