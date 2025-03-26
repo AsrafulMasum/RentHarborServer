@@ -30,6 +30,7 @@ const addingProperty = async (req, res) => {
       features: propertyData?.features,
       host: propertyData?.host,
       address: address,
+      availableDates: propertyData?.availableDates,
     });
     const result = await newProperty.save();
 
