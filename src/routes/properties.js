@@ -2,7 +2,11 @@ const router = require("express").Router();
 const {
   gettingAllProperties,
   gettingPropertyById,
+  addingProperty,
 } = require("../controllers/properties");
+
+// ADDING PROPERTY
+router.post("/addProperty", addingProperty);
 
 // GETTING ALL PROPERTIES DATA
 router.get("/allProperties", gettingAllProperties);

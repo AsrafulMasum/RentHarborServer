@@ -6,6 +6,10 @@ const PropertiesSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    description: {
+      type: String,
+      required: true,
+    },
     category: {
       type: String,
       required: true,
@@ -70,8 +74,8 @@ const PropertiesSchema = new mongoose.Schema(
       required: true,
     },
     availableDates: {
-      type: Array,
-      default: [],
+      type: Object,
+      default: {},
       required: true,
     },
   },
