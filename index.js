@@ -15,7 +15,7 @@ app.use("/token", tokenApi);
 app.use("/auth", userApi);
 app.use("/properties", propertiesApi);
 
-app.get("/health", (req, res) => {
+app.get("/", (req, res) => {
   res.send("server is running data will be appear soon...");
 });
 

@@ -66,8 +66,31 @@ const gettingPropertyById = async (req, res) => {
   }
 };
 
+const gettingPropertiesByHostEmail = async (req, res) => {
+  try {
+    const { email } = req.params;
+    console.log(email);
+
+    if (!email) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Email is required" });
+    }
+
+    const result = await Properties.find({
+      "host.email": email,
+    });
+
+    res.status(200).json({ success: true, result });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
 module.exports = {
   addingProperty,
   gettingAllProperties,
   gettingPropertyById,
+  gettingPropertiesByHostEmail,
 };
