@@ -69,7 +69,6 @@ const gettingPropertyById = async (req, res) => {
 const gettingPropertiesByHostEmail = async (req, res) => {
   try {
     const { email } = req.params;
-    console.log(email);
 
     if (!email) {
       return res
@@ -88,9 +87,19 @@ const gettingPropertiesByHostEmail = async (req, res) => {
   }
 };
 
+const gettingPropertyCategories = async (req, res) => {
+  try {
+    const categories = await Properties.distinct("category");
+    res.status(200).json(categories);
+  } catch (error) {
+    res.status(500).json({ message: "Failed to fetch categories", error });
+  }
+};
+
 module.exports = {
   addingProperty,
   gettingAllProperties,
   gettingPropertyById,
   gettingPropertiesByHostEmail,
+  gettingPropertyCategories,
 };
