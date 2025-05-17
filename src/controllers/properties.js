@@ -54,7 +54,12 @@ const gettingAllProperties = async (req, res) => {
             { title: { $regex: search, $options: "i" } },
             { category: { $regex: search, $options: "i" } },
             { location: { $regex: search, $options: "i" } },
-            { address: { $regex: search, $options: "i" } },
+            { amenities: { $regex: search, $options: "i" } },
+            { features: { $regex: search, $options: "i" } },
+            { "address.street": { $regex: search, $options: "i" } },
+            { "address.city": { $regex: search, $options: "i" } },
+            { "address.state": { $regex: search, $options: "i" } },
+            { "address.zip": { $regex: search, $options: "i" } },
           ],
         }
       : {};
