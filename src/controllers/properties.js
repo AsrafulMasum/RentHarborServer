@@ -34,7 +34,6 @@ const addingProperty = async (req, res) => {
     });
     const result = await newProperty.save();
 
-    // Return a success response
     res.status(201).json({
       result,
       success: true,
@@ -47,7 +46,21 @@ const addingProperty = async (req, res) => {
 
 const gettingAllProperties = async (req, res) => {
   try {
-    const properties = await Properties.find();
+    const { search = "" } = req.query;
+
+    const query = search.trim()
+      ? {
+          $or: [
+            { title: { $regex: search, $options: "i" } },
+            { category: { $regex: search, $options: "i" } },
+            { location: { $regex: search, $options: "i" } },
+            { address: { $regex: search, $options: "i" } },
+          ],
+        }
+      : {};
+
+    const properties = await Properties.find(query).sort({ createdAt: -1 });
+
     res.status(200).json({ properties });
   } catch (err) {
     console.log(err);
