@@ -96,7 +96,7 @@ const gettingPropertiesByHostEmail = async (req, res) => {
 
     const result = await Properties.find({
       "host.email": email,
-    });
+    }).sort({ createdAt: -1 });
 
     res.status(200).json({ success: true, result });
   } catch (error) {
