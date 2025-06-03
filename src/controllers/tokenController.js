@@ -11,7 +11,7 @@ const createTokenController = (req, res) => {
       .cookie("token", token, {
         httpOnly: true,
         secure: true,
-        sameSite: "Lax",
+        sameSite: "None",
       })
       .send({ success: true });
   } catch (error) {
