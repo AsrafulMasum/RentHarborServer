@@ -5,7 +5,7 @@ const createTokenController = (req, res) => {
   const user = req.body;
   try {
     const token = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-      expiresIn: "1h",
+      expiresIn: "7d",
     });
     res
       .cookie("token", token, {
