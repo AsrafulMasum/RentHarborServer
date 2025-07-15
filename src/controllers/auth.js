@@ -76,8 +76,40 @@ const gettingUserController = async (req, res) => {
   }
 };
 
+const userWishlistController = async (req, res) => {
+  const userId = req.params.id;
+  const { propertyId } = req.body;
+
+  try {
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found!" });
+    }
+
+    const alreadyWished = user.wishList.includes(propertyId);
+
+    if (alreadyWished) {
+      user.wishList = user.wishList.filter((id) => id !== propertyId);
+    } else {
+      user.wishList.push(propertyId);
+    }
+
+    await user.save();
+    res
+      .status(200)
+      .json({
+        message: alreadyWished ? "Property removed from wishlist" : "Property added to wishlist",
+        success: true,
+      });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
 module.exports = {
   userRegisterController,
   userLoginController,
   gettingUserController,
+  userWishlistController,
 };
