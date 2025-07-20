@@ -5,6 +5,7 @@ const {
   addingProperty,
   gettingPropertiesByHostEmail,
   gettingPropertyCategories,
+  gettingWishlistByUserId,
 } = require("../controllers/properties");
 const verifyToken = require("../middlewares/verifyToken");
 
@@ -20,7 +21,11 @@ router.get("/hostProperties/:email",verifyToken, gettingPropertiesByHostEmail);
 // GETTING ALL THE CATEGORY OF PROPERTIES
 router.get("/propertyCategories", gettingPropertyCategories);
 
+// GETTING WISHLIST BY USER ID
+router.get("/wishlist", verifyToken, gettingWishlistByUserId);
+
 // GETTING A PROPERTY DATA BY ID
 router.get("/:id", verifyToken, gettingPropertyById);
+
 
 module.exports = router;

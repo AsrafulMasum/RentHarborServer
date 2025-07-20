@@ -114,10 +114,29 @@ const gettingPropertyCategories = async (req, res) => {
   }
 };
 
+const gettingWishlistByUserId = async (req, res) => {
+  const user = req.decoded;
+  try {
+    if (
+      !user?.wishList ||
+      !Array.isArray(user.wishList) ||
+      user.wishList.length === 0
+    ) {
+      return res.status(200).json([]);
+    }
+    const properties = await Properties.find({ _id: { $in: user.wishList } });
+    res.status(200).json({ success: true, properties });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
 module.exports = {
   addingProperty,
   gettingAllProperties,
   gettingPropertyById,
   gettingPropertiesByHostEmail,
   gettingPropertyCategories,
+  gettingWishlistByUserId,
 };
