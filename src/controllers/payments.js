@@ -33,6 +33,9 @@ const createPaymentSession = async (req, res) => {
       success_url: `${protocol}://${host}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${protocol}://${host}/payment-cancel`,
       line_items: lineItems,
+      metadata: {
+        data: "masum",
+      },
     });
     res.json(session?.url);
   } catch (error) {
@@ -42,45 +45,5 @@ const createPaymentSession = async (req, res) => {
 
 module.exports = {
   createPaymentSession,
+  _newStripe,
 };
-
-// const createSession = async (payload, server, data) => {
-//   const { host, protocol } = server;
-//   const { userID } = payload;
-
-//   const lineItems = [
-//     {
-//       price_data: {
-//         currency: "usd",
-//         product_data: {
-//           name: "Amount",
-//         },
-//         unit_amount: offer.budget * 100,
-//       },
-//       quantity: 1,
-//     },
-//   ];
-
-//   try {
-//     const session = await stripe.checkout.sessions.create({
-//       payment_method_types: ["card"],
-//       mode: "payment",
-//       success_url: `${protocol}://${host}/api/v1/payment/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-//       cancel_url: `${protocol}://${host}/api/v1/payment/cancel`,
-//       line_items: lineItems,
-//       metadata: {
-//         commission: offer.budget * 0.05,
-//         userId: String(userID),
-//         offerID: String(offer._id.toString()),
-//       },
-//     });
-
-//     return { session_url: session.url };
-//   } catch (error) {
-//     console.error("Stripe Error:", error);
-//     throw new ApiError(
-//       StatusCodes.INTERNAL_SERVER_ERROR,
-//       "Stripe session creation failed"
-//     );
-//   }
-// };

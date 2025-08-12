@@ -1,4 +1,4 @@
-export const paymentSuccessfull = `<html lang="en">
+export const paymentSuccessful = `<html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -11,7 +11,7 @@ export const paymentSuccessfull = `<html lang="en">
       height: 100vh;
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #e0ffe0;
+      background: #AFDA8E;
     }
     .message-box {
       background: #fff;
@@ -21,7 +21,7 @@ export const paymentSuccessfull = `<html lang="en">
       box-shadow: 0 0 10px rgba(0,0,0,0.1);
     }
     h1 {
-      color: #2ecc71;
+      color: #FD6C23;
     }
     p {
       font-size: 18px;
@@ -30,7 +30,7 @@ export const paymentSuccessfull = `<html lang="en">
       margin-top: 1rem;
       display: inline-block;
       padding: 10px 20px;
-      background: #2ecc71;
+      background: #FD6C23;
       color: #fff;
       border: none;
       border-radius: 4px;
@@ -42,7 +42,7 @@ export const paymentSuccessfull = `<html lang="en">
   <div class="message-box">
     <h1>Payment Successful!</h1>
     <p>Your transaction has been completed successfully.</p>
-    <a class="btn" href="/">Go Home</a>
+    <a class="btn" href="http://localhost:5173">Go Home</a>
   </div>
 </body>
 </html>`;
