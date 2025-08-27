@@ -1,5 +1,8 @@
 const Stripe = require("stripe");
 const User = require("../models/User");
+const { paymentSuccessful, paymentCancelled } = require("../ui/tamplete");
+const Reservation = require("../models/Reservation");
+const { default: mongoose } = require("mongoose");
 const _newStripe = new Stripe(process.env.SECRET_KEY);
 
 const createPaymentSession = async (req, res) => {
@@ -26,6 +29,26 @@ const createPaymentSession = async (req, res) => {
     return res.status(403).send({
       success: false,
       message: "Host cannot book their own property!",
+    });
+  }
+
+  // Check for existing overlapping reservations
+  const conflict = await Reservation.findOne({
+    propertyId: new mongoose.Types.ObjectId(propertyId),
+    $or: [
+      {
+        startDate: { $lte: endDate },
+        endDate: { $gte: startDate },
+      },
+    ],
+  });
+
+  console.log(conflict);
+
+  if (conflict) {
+    return res.status(400).json({
+      success: false,
+      message: "This property is already reserved for the selected dates",
     });
   }
 
@@ -56,11 +79,13 @@ const createPaymentSession = async (req, res) => {
     // }
 
     // If no conflict, create Stripe session
+
+    // have to check duplication and conflict reservation
     const session = await _newStripe.checkout.sessions.create({
       payment_method_types: ["card"],
       mode: "payment",
-      success_url: `${protocol}://${host}/payment-success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${protocol}://${host}/payment-cancel`,
+      success_url: `${protocol}://${host}/payments/payment-success?session_id={CHECKOUT_SESSION_ID}`,
+      cancel_url: `${protocol}://${host}/payments/payment-cancel`,
       line_items: [
         {
           price_data: {
@@ -94,7 +119,55 @@ const createPaymentSession = async (req, res) => {
   }
 };
 
+const paymentSuccess = async (req, res) => {
+  const sessionId = req?.query?.session_id;
+  const checkout = await _newStripe.checkout.sessions.retrieve(sessionId);
+  if (checkout.payment_status !== "paid") {
+    return res.send({
+      success: false,
+      status: 400,
+      message: "Payment Unsuccessful!",
+    });
+  }
+
+  const hostEmail = checkout?.metadata?.hostEmail;
+  const userId = checkout?.metadata?.userId;
+  const propertyId = checkout?.metadata?.propertyId;
+  const startDate = checkout?.metadata?.startDate;
+  const endDate = checkout?.metadata?.endDate;
+
+  const reservationData = {
+    propertyId,
+    startDate,
+    endDate,
+  };
+
+  const user = await User.findById(userId);
+
+  if (!user.transactionID || user.transactionID === "") {
+    return res.send(paymentCancelled);
+  }
+
+  if (user.transactionID != sessionId) {
+    return res.send(paymentCancelled);
+  }
+
+  user.reservationList.push(reservationData);
+  user.transactionID = "";
+  await user.save();
+
+  await Reservation.create({
+    propertyId,
+    userId,
+    startDate,
+    endDate,
+  });
+
+  res.send(paymentSuccessful);
+};
+
 module.exports = {
   createPaymentSession,
+  paymentSuccess,
   _newStripe,
 };
