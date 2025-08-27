@@ -7,7 +7,7 @@ const userApi = require("./src/routes/auth");
 const propertiesApi = require("./src/routes/properties");
 const paymentApi = require("./src/routes/payments");
 // const { default: Stripe } = require("stripe");
-const { paymentSuccessful } = require("./src/ui/tamplete");
+const { paymentSuccessful, paymentCancelled } = require("./src/ui/tamplete");
 const { _newStripe } = require("./src/controllers/payments");
 const User = require("./src/models/User");
 
@@ -42,11 +42,11 @@ app.get("/payment-success", async (req, res) => {
   const user = await User.findById(userId);
 
   if (!user.transactionID || user.transactionID === "") {
-    return res.send("Payment Failed");
+    return res.send(paymentCancelled);
   }
 
   if (user.transactionID != sessionId) {
-    return res.send("Payment Failed");
+    return res.send(paymentCancelled);
   }
 
   user.reservationList.push(reservationData);
