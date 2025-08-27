@@ -11,10 +11,10 @@ export const paymentSuccessful = `<html lang="en">
       height: 100vh;
       margin: 0;
       font-family: Arial, sans-serif;
-      background: #AFDA8E;
+      background: #FFFFFF;
     }
     .message-box {
-      background: #fff;
+      background: #AFDA8E;
       padding: 2rem;
       border-radius: 8px;
       text-align: center;

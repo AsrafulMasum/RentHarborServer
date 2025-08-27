@@ -27,6 +27,10 @@ const UserSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    transactionID: {
+      type: String,
+      default: "",
+    },
     tripList: {
       type: Array,
       default: [],
