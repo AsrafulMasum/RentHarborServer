@@ -76,6 +76,11 @@ const gettingAllProperties = async (req, res) => {
 const gettingPropertyById = async (req, res) => {
   try {
     const propertyId = req.params.id;
+    if (!propertyId || propertyId === "undefined") {
+      return res
+        .status(400)
+        .json({ success: false, message: "Property ID is required" });
+    }
     const property = await Properties.findById(propertyId);
     res.status(200).json({ property });
   } catch (err) {
@@ -132,6 +137,46 @@ const gettingWishlistByUserId = async (req, res) => {
   }
 };
 
+const gettingReservationListByUserId = async (req, res) => {
+  const user = req.decoded;
+  
+  try {
+    if (
+      !user?.reservationList ||
+      !Array.isArray(user.reservationList) ||
+      user.reservationList.length === 0
+    ) {
+      return res.status(200).json({ success: true, properties: [] });
+    }
+
+    // Extract propertyIds
+    const propertyIds = user.reservationList.map((r) => r.propertyId);
+
+    // Get property details
+    const properties = await Properties.find({
+      _id: { $in: propertyIds },
+    });
+
+    // Attach reservation info (startDate, endDate) with property
+    const reservationsWithDetails = user.reservationList.map((reservation) => {
+      const property = properties.find(
+        (p) => p._id.toString() === reservation.propertyId.toString()
+      );
+      return {
+        ...reservation,
+        property,
+      };
+    });
+
+    res
+      .status(200)
+      .json({ success: true, reservations: reservationsWithDetails });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
 module.exports = {
   addingProperty,
   gettingAllProperties,
@@ -139,4 +184,5 @@ module.exports = {
   gettingPropertiesByHostEmail,
   gettingPropertyCategories,
   gettingWishlistByUserId,
+  gettingReservationListByUserId,
 };
