@@ -1,4 +1,5 @@
 const Properties = require("../models/Properties");
+const Reservation = require("../models/Reservation");
 
 const addingProperty = async (req, res) => {
   try {
@@ -76,16 +77,44 @@ const gettingAllProperties = async (req, res) => {
 const gettingPropertyById = async (req, res) => {
   try {
     const propertyId = req.params.id;
+
     if (!propertyId || propertyId === "undefined") {
       return res
         .status(400)
         .json({ success: false, message: "Property ID is required" });
     }
+
+    // 1. Find the property
     const property = await Properties.findById(propertyId);
-    res.status(200).json({ property });
+    if (!property) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Property not found" });
+    }
+
+    // 2. Find all reservations for this property
+    const reservations = await Reservation.find({ propertyId });
+
+    // 3. Expand all reservation ranges into dates
+    let reservedDates = [];
+    reservations.forEach((res) => {
+      let current = new Date(res.startDate);
+      let end = new Date(res.endDate);
+
+      while (current <= end) {
+        reservedDates.push(new Date(current));
+        current.setDate(current.getDate() + 1);
+      }
+    });
+
+    res.status(200).json({
+      success: true,
+      property,
+      reservedDates, // <-- add reserved dates here
+    });
   } catch (err) {
-    console.log(err);
-    res.status(500).json({ error: err.message });
+    console.error(err);
+    res.status(500).json({ success: false, error: err.message });
   }
 };
 
@@ -139,7 +168,7 @@ const gettingWishlistByUserId = async (req, res) => {
 
 const gettingReservationListByUserId = async (req, res) => {
   const user = req.decoded;
-  
+
   try {
     if (
       !user?.reservationList ||
