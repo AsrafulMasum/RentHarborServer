@@ -10,6 +10,7 @@ const {
   blockProperty,
   gettingAllPropertiesForAdmin,
 } = require("../controllers/properties");
+const verifyAdmin = require("../middlewares/verifyAdmin");
 const verifyToken = require("../middlewares/verifyToken");
 
 // ADDING PROPERTY
@@ -19,7 +20,12 @@ router.post("/addProperty", verifyToken, addingProperty);
 router.get("/allProperties", gettingAllProperties);
 
 // GETTING ALL PROPERTIES DATA FOR ADMIN
-router.get("/admin/allProperties", gettingAllPropertiesForAdmin);
+router.get(
+  "/admin/allProperties",
+  verifyToken,
+  verifyAdmin,
+  gettingAllPropertiesForAdmin
+);
 
 // GETTING PROPERTIES BY HOST EMAIL
 router.get("/hostProperties/:email", verifyToken, gettingPropertiesByHostEmail);

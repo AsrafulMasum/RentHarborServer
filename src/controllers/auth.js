@@ -43,16 +43,13 @@ const userRegisterController = async (req, res) => {
 
 const userLoginController = async (req, res) => {
   try {
-    /* Take the infomation from the form */
     const { email, password } = req.body;
 
-    /* Check if user exists */
-    const user = await User.findOne({ email });
+    const user = await User.findOne({ email }).select("-transactionID");
     if (!user) {
       return res.status(409).json({ message: "User doesn't exist!" });
     }
 
-    /* Compare the password with the hashed password */
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
       return res.status(400).json({ message: "Invalid Credentials!" });
@@ -68,7 +65,7 @@ const userLoginController = async (req, res) => {
 const gettingUserController = async (req, res) => {
   try {
     const userId = req.params.id;
-    const user = await User.findById(userId);
+    const user = await User.findById(userId).select("-password -transactionID");
     res.status(200).json({ user });
   } catch (err) {
     console.log(err);
@@ -95,21 +92,65 @@ const userWishlistController = async (req, res) => {
     }
 
     await user.save();
-    res
-      .status(200)
-      .json({
-        message: alreadyWished ? "Property removed from wishlist" : "Property added to wishlist",
-        success: true,
-      });
+    res.status(200).json({
+      message: alreadyWished
+        ? "Property removed from wishlist"
+        : "Property added to wishlist",
+      success: true,
+    });
   } catch (err) {
     console.log(err);
     res.status(500).json({ error: err.message });
   }
 };
 
+const gettingAllUserController = async (req, res) => {
+  try {
+    const users = await User.find({ role: { $ne: "Admin" } }).select(
+      "-password -transactionID"
+    );
+
+    res.status(200).json({ success: true, users });
+  } catch (err) {
+    console.error("Error fetching users:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+
+const blockUserController = async (req, res) => {
+  try {
+    const userId = req.params.id;
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found!" });
+    }
+
+    if (!user.isBlocked) {
+      user.isBlocked = false;
+    }
+
+    user.isBlocked = !user.isBlocked;
+    await user.save();
+
+    res.status(200).json({
+      message: user.isBlocked
+        ? "User blocked successfully"
+        : "User unblocked successfully",
+      success: true,
+    });
+  } catch (err) {
+    console.error("Error blocking user:", err);
+    res.status(500).json({ success: false, error: err.message });
+  }
+};
+/*******  9ac4b01b-c4bf-40be-98dd-610a9f87b4ac  *******/  
+
 module.exports = {
   userRegisterController,
   userLoginController,
   gettingUserController,
   userWishlistController,
+  gettingAllUserController,
+  blockUserController,
 };

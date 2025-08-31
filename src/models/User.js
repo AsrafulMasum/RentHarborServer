@@ -27,6 +27,10 @@ const UserSchema = new mongoose.Schema(
       type: Number,
       required: true,
     },
+    isBlocked: {
+      type: Boolean,
+      default: false,
+    },
     transactionID: {
       type: String,
       default: "",
