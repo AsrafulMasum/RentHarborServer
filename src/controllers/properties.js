@@ -45,7 +45,7 @@ const addingProperty = async (req, res) => {
   }
 };
 
-const gettingAllProperties = async (req, res) => {
+const gettingAllPropertiesForAdmin = async (req, res) => {
   try {
     const { search = "" } = req.query;
 
@@ -70,6 +70,45 @@ const gettingAllProperties = async (req, res) => {
     res.status(200).json({ properties });
   } catch (err) {
     console.log(err);
+    res.status(500).json({ error: err.message });
+  }
+};
+
+const gettingAllProperties = async (req, res) => {
+  try {
+    const { search = "" } = req.query;
+
+    const baseQuery = {
+      isBlocked: { $ne: true },
+    };
+
+    const searchQuery = search.trim()
+      ? {
+          $or: [
+            { title: { $regex: search, $options: "i" } },
+            { category: { $regex: search, $options: "i" } },
+            { location: { $regex: search, $options: "i" } },
+            { amenities: { $regex: search, $options: "i" } },
+            { features: { $regex: search, $options: "i" } },
+            { "address.street": { $regex: search, $options: "i" } },
+            { "address.city": { $regex: search, $options: "i" } },
+            { "address.state": { $regex: search, $options: "i" } },
+            { "address.zip": { $regex: search, $options: "i" } },
+          ],
+        }
+      : {};
+
+    const finalQuery = search.trim()
+      ? { ...baseQuery, ...searchQuery }
+      : baseQuery;
+
+    const properties = await Properties.find(finalQuery).sort({
+      createdAt: -1,
+    });
+
+    res.status(200).json({ properties });
+  } catch (err) {
+    console.error("Error fetching properties:", err);
     res.status(500).json({ error: err.message });
   }
 };
@@ -206,12 +245,43 @@ const gettingReservationListByUserId = async (req, res) => {
   }
 };
 
+const blockProperty = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    const property = await Properties.findById(id);
+    if (!property) {
+      return res
+        .status(404)
+        .json({ success: false, message: "Property not found" });
+    }
+
+    // Toggle or create the field
+    property.isBlocked = property.isBlocked ? false : true;
+
+    await property.save();
+
+    res.status(200).json({
+      success: true,
+      message: property.isBlocked
+        ? "Property blocked successfully"
+        : "Property unblocked successfully",
+      data: property,
+    });
+  } catch (error) {
+    console.error("Error blocking property:", error);
+    res.status(500).json({ success: false, error: error.message });
+  }
+};
+
 module.exports = {
   addingProperty,
   gettingAllProperties,
+  gettingAllPropertiesForAdmin,
   gettingPropertyById,
   gettingPropertiesByHostEmail,
   gettingPropertyCategories,
   gettingWishlistByUserId,
   gettingReservationListByUserId,
+  blockProperty,
 };

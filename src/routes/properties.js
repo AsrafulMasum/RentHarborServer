@@ -7,6 +7,8 @@ const {
   gettingPropertyCategories,
   gettingWishlistByUserId,
   gettingReservationListByUserId,
+  blockProperty,
+  gettingAllPropertiesForAdmin,
 } = require("../controllers/properties");
 const verifyToken = require("../middlewares/verifyToken");
 
@@ -15,6 +17,9 @@ router.post("/addProperty", verifyToken, addingProperty);
 
 // GETTING ALL PROPERTIES DATA
 router.get("/allProperties", gettingAllProperties);
+
+// GETTING ALL PROPERTIES DATA FOR ADMIN
+router.get("/admin/allProperties", gettingAllPropertiesForAdmin);
 
 // GETTING PROPERTIES BY HOST EMAIL
 router.get("/hostProperties/:email", verifyToken, gettingPropertiesByHostEmail);
@@ -27,6 +32,9 @@ router.get("/wishlist", verifyToken, gettingWishlistByUserId);
 
 // GETTING RESERVATION LIST BY USER ID
 router.get("/reservations", verifyToken, gettingReservationListByUserId);
+
+// BLOCKING A PROPERTY
+router.put("/block/:id", verifyToken, blockProperty);
 
 // GETTING A PROPERTY DATA BY ID
 router.get("/:id", verifyToken, gettingPropertyById);

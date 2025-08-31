@@ -73,6 +73,10 @@ const PropertiesSchema = new mongoose.Schema(
       default: [],
       required: true,
     },
+    isBlocked: {
+      type: Boolean,
+      default: false,
+    },
     availableDates: {
       type: Object,
       default: {},
