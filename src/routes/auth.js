@@ -6,6 +6,11 @@ const {
   userWishlistController,
   gettingAllUserController,
   blockUserController,
+  verifyUserController,
+  resendVerificationCodeController,
+  forgotPasswordController,
+  verifyResetCodeController,
+  resetPasswordController,
 } = require("../controllers/auth");
 const verifyAdmin = require("../middlewares/verifyAdmin");
 const verifyToken = require("../middlewares/verifyToken");
@@ -14,7 +19,19 @@ const verifyToken = require("../middlewares/verifyToken");
 router.post("/register", userRegisterController);
 
 /* USER VERIFY */
-router.post("/verify", userRegisterController);
+router.post("/verify", verifyUserController);
+
+/* FORGOT PASSWORD */
+router.post("/forgot-password", forgotPasswordController);
+
+/* VERIFY RESET CODE */
+router.post("/verify-reset-code", verifyResetCodeController);
+
+/* RESET PASSWORD */
+router.post("/reset-password", resetPasswordController);
+
+/* RESEND CODE */
+router.post("/resend", resendVerificationCodeController);
 
 /* USER LOGIN*/
 router.post("/login", userLoginController);

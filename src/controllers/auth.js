@@ -1,47 +1,7 @@
 const User = require("../models/User");
 const bcrypt = require("bcryptjs");
-const {sendVerificationEmail} = require("../ui/email.js");
-
-
-// const userRegisterController = async (req, res) => {
-//   try {
-//     /* Take all information from the form */
-//     const { name, email, password, photo_url, role, phone } = req.body;
-
-//     /* Check if user exists */
-//     const existingUser = await User.findOne({ email });
-//     if (existingUser) {
-//       return res.status(409).json({ message: "User already exists!" });
-//     }
-
-//     /* Hash the password */
-//     const salt = await bcrypt.genSalt();
-//     const hashedPassword = await bcrypt.hash(password, salt);
-
-//     /* Create a new User */
-//     const newUser = new User({
-//       name,
-//       email,
-//       password: hashedPassword,
-//       photo_url,
-//       role,
-//       phone,
-//     });
-
-//     /* Save the new User */
-//     await newUser.save();
-
-//     /* Send a successful message */
-//     res
-//       .status(200)
-//       .json({ message: "User registered successfully!", success: true });
-//   } catch (err) {
-//     console.log(err);
-//     res
-//       .status(500)
-//       .json({ message: "Registration failed!", error: err.message });
-//   }
-// };
+const crypto = require("crypto");
+const { sendVerificationEmail } = require("../ui/email.js");
 
 const verifyUserController = async (req, res) => {
   try {
@@ -57,7 +17,7 @@ const verifyUserController = async (req, res) => {
       return res.status(400).json({ message: "User already verified!" });
     }
 
-    if (user.verificationCode !== code) {
+    if (user.verificationCode !== Number(code)) {
       return res.status(400).json({ message: "Invalid verification code!" });
     }
 
@@ -79,6 +39,148 @@ const verifyUserController = async (req, res) => {
   }
 };
 
+const resendVerificationCodeController = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: "Email is required!" });
+    }
+
+    const user = await User.findOne({ email });
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found!" });
+    }
+
+    if (user.isVerified) {
+      return res.status(400).json({ message: "User is already verified!" });
+    }
+
+    if (
+      user.lastResendAt &&
+      Date.now() - user.lastResendAt.getTime() < 60 * 1000
+    ) {
+      return res.status(429).json({
+        message:
+          "Please wait at least 1 minute before requesting another verification code.",
+      });
+    }
+
+    // Generate new OTP
+    const newCode = Math.floor(100000 + Math.random() * 900000);
+    const expiresIn = Date.now() + 5 * 60 * 1000;
+
+    user.verificationCode = newCode;
+    user.verificationCodeExpires = expiresIn;
+    user.lastResendAt = new Date();
+    user.resendAttempt = (user.resendAttempt || 0) + 1;
+
+    await user.save();
+
+    // Send email
+    await sendVerificationEmail(email, newCode);
+
+    res.status(200).json({
+      message: "Verification code resent successfully!",
+      success: true,
+    });
+  } catch (err) {
+    console.log(err);
+    res.status(500).json({
+      message: "Failed to resend code.",
+      error: err.message,
+    });
+  }
+};
+
+const forgotPasswordController = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found!" });
+
+    const code = Math.floor(100000 + Math.random() * 900000);
+
+    user.resetPasswordCode = code;
+    user.resetPasswordExpires = Date.now() + 5 * 60 * 1000;
+    await user.save();
+
+    await sendResetPasswordEmail(email, code);
+
+    res.json({ message: "Reset code sent!", success: true });
+  } catch (err) {
+    res.status(500).json({ message: "Failed!", error: err.message });
+  }
+};
+
+const verifyResetCodeController = async (req, res) => {
+  try {
+    const { email, code } = req.body;
+
+    const user = await User.findOne({ email });
+    if (!user) return res.status(404).json({ message: "User not found!" });
+
+    if (user.resetPasswordCode !== Number(code))
+      return res.status(400).json({ message: "Invalid reset code!" });
+
+    if (user.resetPasswordExpires < Date.now())
+      return res.status(400).json({ message: "Reset code expired!" });
+
+    const resetToken = crypto.randomBytes(32).toString("hex");
+
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordCode = undefined;
+    user.resetPasswordExpires = undefined;
+    await user.save();
+
+    res.json({
+      message: "Code verified!",
+      resetToken,
+      success: true,
+    });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Verification failed!", error: err.message });
+  }
+};
+
+const resetPasswordController = async (req, res) => {
+  try {
+    const { resetToken, newPassword } = req.body;
+
+    if (!resetToken || !newPassword) {
+      return res.status(400).json({ message: "All fields are required!" });
+    }
+
+    // Find user by resetToken and ensure token is not expired
+    const user = await User.findOne({
+      resetPasswordToken: resetToken,
+    });
+
+    if (!user) {
+      return res.status(400).json({ message: "Invalid or expired token!" });
+    }
+
+    // Hash new password
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // Update password and clear token
+    user.password = hashedPassword;
+    user.resetPasswordToken = undefined;
+    await user.save();
+
+    res.json({ message: "Password reset successful!", success: true });
+  } catch (err) {
+    res
+      .status(500)
+      .json({ message: "Password reset failed!", error: err.message });
+  }
+};
+
 const userRegisterController = async (req, res) => {
   try {
     const { name, email, password, photo_url, role, phone } = req.body;
@@ -90,8 +192,8 @@ const userRegisterController = async (req, res) => {
     }
 
     // Generate verification code
-    const verificationCode = Math.floor(100000 + Math.random() * 900000); // 6-digit
-    const codeExpires = Date.now() + 10 * 60 * 1000; // 10 min
+    const verificationCode = Math.floor(100000 + Math.random() * 900000);
+    const codeExpires = Date.now() + 5 * 60 * 1000;
 
     const salt = await bcrypt.genSalt();
     const hashedPassword = await bcrypt.hash(password, salt);
@@ -229,7 +331,6 @@ const blockUserController = async (req, res) => {
     res.status(500).json({ success: false, error: err.message });
   }
 };
-/*******  9ac4b01b-c4bf-40be-98dd-610a9f87b4ac  *******/
 
 module.exports = {
   userRegisterController,
@@ -239,4 +340,8 @@ module.exports = {
   gettingAllUserController,
   blockUserController,
   verifyUserController,
+  resendVerificationCodeController,
+  forgotPasswordController,
+  resetPasswordController,
+  verifyResetCodeController,
 };

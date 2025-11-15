@@ -70,7 +70,7 @@ export const sendVerificationEmail = async (email, code) => {
               <td class="hero" style="padding:32px 28px 20px;">
                 <h1 style="margin:0 0 8px; font-size:20px; letter-spacing:-0.2px;">Verify your email address</h1>
                 <p style="margin:0 0 18px; color:#0f172a; line-height:1.5;">
-                  Use the code below to complete your registration. This code will expire in <strong>10 minutes</strong>.
+                  Use the code below to complete your registration. This code will expire in <strong>5 minutes</strong>.
                 </p>
 
                 <!-- OTP box -->
