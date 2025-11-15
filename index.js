@@ -6,11 +6,13 @@ const tokenApi = require("./src/routes/token");
 const userApi = require("./src/routes/auth");
 const propertiesApi = require("./src/routes/properties");
 const paymentApi = require("./src/routes/payments");
+const logRequests = require("./src/middlewares/loggerMiddleware");
 
 const app = express();
 const port = process.env.PORT || 3000;
 
 middlewares(app);
+app.use(logRequests);
 
 app.use("/token", tokenApi);
 app.use("/auth", userApi);
