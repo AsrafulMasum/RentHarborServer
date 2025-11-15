@@ -13,6 +13,9 @@ const verifyToken = require("../middlewares/verifyToken");
 /* USER REGISTER */
 router.post("/register", userRegisterController);
 
+/* USER VERIFY */
+router.post("/verify", userRegisterController);
+
 /* USER LOGIN*/
 router.post("/login", userLoginController);
 
