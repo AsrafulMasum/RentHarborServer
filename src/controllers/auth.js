@@ -107,7 +107,7 @@ const forgotPasswordController = async (req, res) => {
     user.resetPasswordExpires = Date.now() + 5 * 60 * 1000;
     await user.save();
 
-    await sendResetPasswordEmail(email, code);
+    await sendVerificationEmail(email, code);
 
     res.json({ message: "Reset code sent!", success: true });
   } catch (err) {
@@ -131,8 +131,8 @@ const verifyResetCodeController = async (req, res) => {
     const resetToken = crypto.randomBytes(32).toString("hex");
 
     user.resetPasswordToken = resetToken;
-    user.resetPasswordCode = undefined;
-    user.resetPasswordExpires = undefined;
+    // user.resetPasswordCode = undefined;
+    // user.resetPasswordExpires = undefined;
     await user.save();
 
     res.json({
