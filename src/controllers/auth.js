@@ -181,6 +181,76 @@ const resetPasswordController = async (req, res) => {
   }
 };
 
+const updateUserDetailsController = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { name, phone, photo_url } = req.body;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found!" });
+    }
+
+    if (name) user.name = name;
+    if (phone) user.phone = phone;
+    if (photo_url) user.photo_url = photo_url;
+
+    await user.save();
+
+    res.status(200).json({
+      message: "User details updated successfully!",
+      success: true,
+      user: {
+        name: user.name,
+        email: user.email,
+        photo_url: user.photo_url,
+        phone: user.phone,
+        role: user.role,
+      },
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Failed to update user details!",
+      error: err.message,
+    });
+  }
+};
+
+const changePasswordController = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { oldPassword, newPassword } = req.body;
+
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found!" });
+    }
+
+    // Compare old password
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: "Old password is incorrect!" });
+    }
+
+    // Hash new password
+    const salt = await bcrypt.genSalt();
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    user.password = hashedPassword;
+    await user.save();
+
+    res.status(200).json({
+      message: "Password changed successfully!",
+      success: true,
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: "Failed to change password!",
+      error: err.message,
+    });
+  }
+};
+
 const userRegisterController = async (req, res) => {
   try {
     const { name, email, password, photo_url, role, phone } = req.body;
@@ -235,6 +305,10 @@ const userLoginController = async (req, res) => {
     const user = await User.findOne({ email }).select("-transactionID");
     if (!user) {
       return res.status(409).json({ message: "User doesn't exist!" });
+    }
+
+    if (!user.isVerified) {
+      return res.status(400).json({ message: "User is not verified!" });
     }
 
     const isMatch = await bcrypt.compare(password, user.password);
@@ -344,4 +418,6 @@ module.exports = {
   forgotPasswordController,
   resetPasswordController,
   verifyResetCodeController,
+  updateUserDetailsController,
+  changePasswordController,
 };

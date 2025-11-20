@@ -11,6 +11,8 @@ const {
   forgotPasswordController,
   verifyResetCodeController,
   resetPasswordController,
+  updateUserDetailsController,
+  changePasswordController,
 } = require("../controllers/auth");
 const verifyAdmin = require("../middlewares/verifyAdmin");
 const verifyToken = require("../middlewares/verifyToken");
@@ -32,6 +34,12 @@ router.post("/reset-password", resetPasswordController);
 
 /* RESEND CODE */
 router.post("/resend", resendVerificationCodeController);
+
+/* UPDATE USER */
+router.post("/update-user/:userId", verifyToken, updateUserDetailsController);
+
+/* CHANGE PASSWORD */
+router.post("/update-Password/:userId", verifyToken, changePasswordController);
 
 /* USER LOGIN*/
 router.post("/login", userLoginController);
