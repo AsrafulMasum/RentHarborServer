@@ -36,10 +36,10 @@ router.post("/reset-password", resetPasswordController);
 router.post("/resend", resendVerificationCodeController);
 
 /* UPDATE USER */
-router.post("/update-user/:userId", verifyToken, updateUserDetailsController);
+router.put("/update-user/:userId", verifyToken, updateUserDetailsController);
 
 /* CHANGE PASSWORD */
-router.post("/update-Password/:userId", verifyToken, changePasswordController);
+router.put("/update-Password/:userId", verifyToken, changePasswordController);
 
 /* USER LOGIN*/
 router.post("/login", userLoginController);
