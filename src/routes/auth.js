@@ -13,6 +13,7 @@ const {
   resetPasswordController,
   updateUserDetailsController,
   changePasswordController,
+  updateUserRoleController,
 } = require("../controllers/auth");
 const verifyAdmin = require("../middlewares/verifyAdmin");
 const verifyToken = require("../middlewares/verifyToken");
@@ -55,5 +56,8 @@ router.get("/admin/users", verifyToken, verifyAdmin, gettingAllUserController);
 
 // BLOCKING A USER
 router.post("/block-user/:id", verifyToken, verifyAdmin, blockUserController);
+
+// UPDATING USER ROLE
+router.put("/update-role/:userId", verifyAdmin, updateUserRoleController);
 
 module.exports = router;

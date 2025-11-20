@@ -406,6 +406,49 @@ const blockUserController = async (req, res) => {
   }
 };
 
+const updateUserRoleController = async (req, res) => {
+  const ALLOWED_ROLES = ["Guest", "Host", "Admin"];
+
+  try {
+    const { userId } = req.params;
+    const { role } = req.body;
+
+    // Validate role input
+    if (!role || !ALLOWED_ROLES.includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: "Invalid role. Allowed roles: Guest, Host, Admin",
+      });
+    }
+
+    // Find and update user
+    const updatedUser = await User.findByIdAndUpdate(
+      userId,
+      { role },
+      { new: true }
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found!",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "User role updated successfully!",
+      user: updatedUser,
+    });
+  } catch (err) {
+    console.error("Error updating role:", err);
+    return res.status(500).json({
+      success: false,
+      message: "Internal server error!",
+    });
+  }
+};
+
 module.exports = {
   userRegisterController,
   userLoginController,
@@ -420,4 +463,5 @@ module.exports = {
   verifyResetCodeController,
   updateUserDetailsController,
   changePasswordController,
+  updateUserRoleController,
 };
