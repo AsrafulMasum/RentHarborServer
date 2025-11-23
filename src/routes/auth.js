@@ -14,6 +14,8 @@ const {
   updateUserDetailsController,
   changePasswordController,
   updateUserRoleController,
+  updateHostRequestController,
+  getAllRequestedHostsController,
 } = require("../controllers/auth");
 const verifyAdmin = require("../middlewares/verifyAdmin");
 const verifyToken = require("../middlewares/verifyToken");
@@ -56,6 +58,12 @@ router.get("/admin/users", verifyToken, verifyAdmin, gettingAllUserController);
 
 // BLOCKING A USER
 router.post("/block-user/:id", verifyToken, verifyAdmin, blockUserController);
+
+// REQUESTING TO BE A HOST
+router.patch("/request-host/:userId", verifyToken, updateHostRequestController);
+
+// GETTING ALL REQUESTED USER
+router.get("/requested/hosts", verifyToken, verifyAdmin, getAllRequestedHostsController);
 
 // UPDATING USER ROLE
 router.put("/update-role/:userId", verifyAdmin, updateUserRoleController);

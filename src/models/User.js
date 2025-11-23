@@ -86,6 +86,10 @@ const UserSchema = new mongoose.Schema(
       type: Date,
       default: null,
     },
+    isRequestedForHost: {
+      type: Boolean,
+      default: false,
+    },
   },
   { timestamps: true }
 );

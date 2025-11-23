@@ -406,6 +406,67 @@ const blockUserController = async (req, res) => {
   }
 };
 
+const updateHostRequestController = async (req, res) => {
+  try {
+    const { userId } = req.params;
+    const { isRequestedForHost } = req.body;
+
+    // Validate boolean
+    if (typeof isRequestedForHost !== "boolean") {
+      return res
+        .status(400)
+        .json({ message: "isRequestedForHost must be a boolean value" });
+    }
+
+    // Check user exists
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "User not found!" });
+    }
+
+    // Check user role
+    if (user.role !== "Guest") {
+      return res.status(403).json({
+        message: "Only Guest users can request to become a host!",
+      });
+    }
+
+    // Update field
+    user.isRequestedForHost = isRequestedForHost;
+    await user.save();
+
+    res.status(200).json({
+      message: "Host request status updated successfully",
+      user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
+const getAllRequestedHostsController = async (req, res) => {
+  try {
+    const requestedUsers = await User.find({
+      isRequestedForHost: true,
+      role: "Guest",
+    }).select("-password");
+
+    res.status(200).json({
+      message: "Requested host users fetched successfully",
+      count: requestedUsers.length,
+      users: requestedUsers,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
 const updateUserRoleController = async (req, res) => {
   const ALLOWED_ROLES = ["Guest", "Host", "Admin"];
 
@@ -464,4 +525,6 @@ module.exports = {
   updateUserDetailsController,
   changePasswordController,
   updateUserRoleController,
+  updateHostRequestController,
+  getAllRequestedHostsController,
 };
