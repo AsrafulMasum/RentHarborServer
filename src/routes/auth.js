@@ -16,7 +16,9 @@ const {
   updateUserRoleController,
   updateHostRequestController,
   getAllRequestedHostsController,
+  becomeAHostController,
 } = require("../controllers/auth");
+const upload = require("../middlewares/upload");
 const verifyAdmin = require("../middlewares/verifyAdmin");
 const verifyToken = require("../middlewares/verifyToken");
 
@@ -60,10 +62,25 @@ router.get("/admin/users", verifyToken, verifyAdmin, gettingAllUserController);
 router.post("/block-user/:id", verifyToken, verifyAdmin, blockUserController);
 
 // REQUESTING TO BE A HOST
-router.patch("/request-host/:userId", verifyToken, updateHostRequestController);
+// router.patch("/request-host/:userId", verifyToken, updateHostRequestController);
+router.post(
+  "/request-host/:userId",
+  // verifyToken,
+  upload.fields([
+    { name: "nidOrPassport", maxCount: 1 },
+    { name: "addressProof", maxCount: 1 },
+    { name: "certification", maxCount: 1 },
+  ]),
+  becomeAHostController
+);
 
 // GETTING ALL REQUESTED USER
-router.get("/requested/hosts", verifyToken, verifyAdmin, getAllRequestedHostsController);
+router.get(
+  "/requested/hosts",
+  verifyToken,
+  verifyAdmin,
+  getAllRequestedHostsController
+);
 
 // UPDATING USER ROLE
 router.put("/update-role/:userId", verifyAdmin, updateUserRoleController);

@@ -90,6 +90,18 @@ const UserSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    nidOrPassportFile: {
+      type: String,
+      default: null,
+    },
+    addressProofFile: {
+      type: String,
+      default: null,
+    },
+    certificationFile: {
+      type: String,
+      default: null,
+    },
   },
   { timestamps: true }
 );

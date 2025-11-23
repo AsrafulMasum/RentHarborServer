@@ -447,6 +447,45 @@ const updateHostRequestController = async (req, res) => {
   }
 };
 
+const becomeAHostController = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const user = await User.findById(userId);
+    if (!user) return res.status(404).json({ message: "User not found!" });
+
+    if (user.role !== "Guest") {
+      return res.status(403).json({
+        message: "Only Guest users can request to become a host!",
+      });
+    }
+
+    // Attach uploaded files
+    user.nidOrPassportFile = req.files.nidOrPassport[0].path;
+    user.addressProofFile = req.files.addressProof[0].path;
+
+    // Optional file
+    if (req.files.certification) {
+      user.certificationFile = req.files.certification[0].path;
+    }
+
+    // mark the user requested
+    user.isRequestedForHost = true;
+
+    await user.save();
+
+    res.status(200).json({
+      message: "Host request submitted successfully",
+      user,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: "Server error",
+      error: error.message,
+    });
+  }
+};
+
 const getAllRequestedHostsController = async (req, res) => {
   try {
     const requestedUsers = await User.find({
@@ -527,4 +566,5 @@ module.exports = {
   updateUserRoleController,
   updateHostRequestController,
   getAllRequestedHostsController,
+  becomeAHostController,
 };
