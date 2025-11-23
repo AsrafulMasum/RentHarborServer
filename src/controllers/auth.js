@@ -460,6 +460,20 @@ const becomeAHostController = async (req, res) => {
       });
     }
 
+    if (user.isRequestedForHost) {
+      return res.status(400).json({
+        message: "You have already requested to become a host! Please wait.",
+      });
+    }
+
+    // Validate file uploads
+    if (!req.files || !req.files.nidOrPassport || !req.files.addressProof) {
+      return res.status(400).json({
+        message:
+          "Missing required files: NID/Passport and Address Proof must be uploaded!",
+      });
+    }
+
     // Attach uploaded files
     user.nidOrPassportFile = req.files.nidOrPassport[0].path;
     user.addressProofFile = req.files.addressProof[0].path;
