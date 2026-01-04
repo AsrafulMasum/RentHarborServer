@@ -1,10 +1,18 @@
-const Stripe = require("stripe");
-const User = require("../models/User");
-const { paymentSuccessful, paymentCancelled } = require("../ui/tamplete");
-const Reservation = require("../models/Reservation");
-const { default: mongoose } = require("mongoose");
+// const Stripe = require("stripe");
+// const User = require("../models/User");
+// const { paymentSuccessful, paymentCancelled } = require("../ui/tamplete");
+// const Reservation = require("../models/Reservation");
+// const { default: mongoose } = require("mongoose");
+// const _newStripe = new Stripe(process.env.SECRET_KEY);
+
+import Stripe from "stripe";
+import User from "../models/User.js";
+import { paymentSuccessful, paymentCancelled } from "../ui/tamplete.js";
+import Reservation from "../models/Reservation.js";
+import mongoose  from "mongoose";
 const _newStripe = new Stripe(process.env.SECRET_KEY);
 
+// CREATE PAYMENT SESSION
 const createPaymentSession = async (req, res) => {
   const protocol = req?.protocol;
   const host = req?.headers?.host;
@@ -119,6 +127,7 @@ const createPaymentSession = async (req, res) => {
   }
 };
 
+// PAYMENT SUCCESS HANDLER
 const paymentSuccess = async (req, res) => {
   const sessionId = req?.query?.session_id;
   const checkout = await _newStripe.checkout.sessions.retrieve(sessionId);
@@ -166,7 +175,7 @@ const paymentSuccess = async (req, res) => {
   res.send(paymentSuccessful);
 };
 
-module.exports = {
+export {
   createPaymentSession,
   paymentSuccess,
   _newStripe,

@@ -1,5 +1,8 @@
-require("dotenv").config();
-const jwt = require("jsonwebtoken");
+// require("dotenv").config();
+// const jwt = require("jsonwebtoken");
+import dotenv from "dotenv";
+import jwt from "jsonwebtoken";
+dotenv.config();
 
 const verifyToken = (req, res, next) => {
   const token = req.cookies.token;
@@ -15,4 +18,4 @@ const verifyToken = (req, res, next) => {
   });
 };
 
-module.exports = verifyToken;
+export default verifyToken;

@@ -1,4 +1,5 @@
-const mongoose = require("mongoose");
+// const mongoose = require("mongoose");
+import mongoose from "mongoose";
 
 const PropertiesSchema = new mongoose.Schema(
   {
@@ -87,4 +88,4 @@ const PropertiesSchema = new mongoose.Schema(
 );
 
 const Properties = mongoose.model("Properties", PropertiesSchema);
-module.exports = Properties;
+export default Properties;

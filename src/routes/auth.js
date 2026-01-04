@@ -1,5 +1,30 @@
-const router = require("express").Router();
-const {
+// import express from "express";
+import express from "express";
+const router = express.Router();
+
+// const {
+//   userRegisterController,
+//   userLoginController,
+//   gettingUserController,
+//   userWishlistController,
+//   gettingAllUserController,
+//   blockUserController,
+//   verifyUserController,
+//   resendVerificationCodeController,
+//   forgotPasswordController,
+//   verifyResetCodeController,
+//   resetPasswordController,
+//   updateUserDetailsController,
+//   changePasswordController,
+//   updateUserRoleController,
+//   updateHostRequestController,
+//   getAllRequestedHostsController,
+//   becomeAHostController,
+// } = require("../controllers/auth");
+// const upload = require("../middlewares/upload");
+// const verifyAdmin = require("../middlewares/verifyAdmin");
+// const verifyToken = require("../middlewares/verifyToken");
+import {
   userRegisterController,
   userLoginController,
   gettingUserController,
@@ -15,12 +40,13 @@ const {
   changePasswordController,
   updateUserRoleController,
   updateHostRequestController,
-  getAllRequestedHostsController,
   becomeAHostController,
-} = require("../controllers/auth");
-const upload = require("../middlewares/upload");
-const verifyAdmin = require("../middlewares/verifyAdmin");
-const verifyToken = require("../middlewares/verifyToken");
+  getAllRequestedHostsController,
+} from "../controllers/auth.js";
+
+import upload from "../middlewares/upload.js";
+import verifyAdmin from "../middlewares/verifyAdmin.js";
+import verifyToken from "../middlewares/verifyToken.js";
 
 /* USER REGISTER */
 router.post("/register", userRegisterController);
@@ -85,4 +111,4 @@ router.get(
 // UPDATING USER ROLE
 router.put("/update-role/:userId", verifyAdmin, updateUserRoleController);
 
-module.exports = router;
+export default router;

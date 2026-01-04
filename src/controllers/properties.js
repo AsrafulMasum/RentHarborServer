@@ -1,6 +1,9 @@
-const Properties = require("../models/Properties");
-const Reservation = require("../models/Reservation");
+// const Properties = require("../models/Properties");
+// const Reservation = require("../models/Reservation");
+import Properties from "../models/Properties.js";
+import Reservation from "../models/Reservation.js";
 
+// ADDING A PROPERTY
 const addingProperty = async (req, res) => {
   try {
     const propertyData = req.body;
@@ -45,6 +48,7 @@ const addingProperty = async (req, res) => {
   }
 };
 
+// GETTING ALL PROPERTIES FOR ADMIN
 const gettingAllPropertiesForAdmin = async (req, res) => {
   try {
     const { search = "" } = req.query;
@@ -74,6 +78,7 @@ const gettingAllPropertiesForAdmin = async (req, res) => {
   }
 };
 
+// GETTING ALL PROPERTIES
 const gettingAllProperties = async (req, res) => {
   try {
     const { search = "" } = req.query;
@@ -113,6 +118,7 @@ const gettingAllProperties = async (req, res) => {
   }
 };
 
+// GETTING A PROPERTY BY ID
 const gettingPropertyById = async (req, res) => {
   try {
     const propertyId = req.params.id;
@@ -157,6 +163,7 @@ const gettingPropertyById = async (req, res) => {
   }
 };
 
+// GETTING PROPERTIES BY HOST EMAIL
 const gettingPropertiesByHostEmail = async (req, res) => {
   try {
     const { email } = req.params;
@@ -178,6 +185,7 @@ const gettingPropertiesByHostEmail = async (req, res) => {
   }
 };
 
+// GETTING PROPERTY CATEGORIES
 const gettingPropertyCategories = async (req, res) => {
   try {
     const categories = await Properties.distinct("category");
@@ -187,6 +195,7 @@ const gettingPropertyCategories = async (req, res) => {
   }
 };
 
+// GETTING WISHLIST BY USER ID
 const gettingWishlistByUserId = async (req, res) => {
   const user = req.decoded;
   try {
@@ -205,6 +214,7 @@ const gettingWishlistByUserId = async (req, res) => {
   }
 };
 
+// GETTING RESERVATION LIST BY USER ID
 const gettingReservationListByUserId = async (req, res) => {
   const user = req.decoded;
 
@@ -245,6 +255,7 @@ const gettingReservationListByUserId = async (req, res) => {
   }
 };
 
+// 
 const blockProperty = async (req, res) => {
   const { id } = req.params;
 
@@ -274,7 +285,7 @@ const blockProperty = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   addingProperty,
   gettingAllProperties,
   gettingAllPropertiesForAdmin,

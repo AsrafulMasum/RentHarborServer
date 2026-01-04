@@ -1,12 +1,18 @@
-const {
+// const {
+//   createPaymentSession,
+//   paymentSuccess,
+// } = require("../controllers/payments");
+// const verifyToken = require("../middlewares/verifyToken");
+import {
   createPaymentSession,
   paymentSuccess,
-} = require("../controllers/payments");
-const verifyToken = require("../middlewares/verifyToken");
+} from "../controllers/payments.js";
+import verifyToken from "../middlewares/verifyToken.js";
 
-const router = require("express").Router();
+import express from "express";
+const router = express.Router();
 
 router.post("/payment-session", verifyToken, createPaymentSession);
 router.get("/payment-success", paymentSuccess);
 
-module.exports = router;
+export default router;

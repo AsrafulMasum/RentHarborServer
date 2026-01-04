@@ -1,4 +1,5 @@
-const logger = require("../utils/logger");
+// const logger = require("../utils/logger");
+import logger from "../utils/logger.js";
 
 const logRequests = (req, res, next) => {
   logger.info(
@@ -17,4 +18,5 @@ const logRequests = (req, res, next) => {
   next();
 };
 
-module.exports = logRequests;
+// export default logRequests;
+export default logRequests;

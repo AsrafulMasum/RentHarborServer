@@ -1,6 +1,10 @@
-const jwt = require("jsonwebtoken");
-require("dotenv").config();
+// const jwt = require("jsonwebtoken");
+// require("dotenv").config();
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 
+// CREATE TOKEN CONTROLLER
 const createTokenController = (req, res) => {
   const user = req.body;
   try {
@@ -19,8 +23,9 @@ const createTokenController = (req, res) => {
   }
 };
 
+// CLEAR TOKEN CONTROLLER
 const clearTokenController = (req, res) => {
   res.clearCookie("token", { maxAge: 0 }).send({ success: true });
 };
 
-module.exports = { createTokenController, clearTokenController };
+export default { createTokenController, clearTokenController };

@@ -1,9 +1,15 @@
-const { createTokenController, clearTokenController } = require("../controllers/tokenController");
+// const { createTokenController, clearTokenController } = require("../controllers/tokenController");
+// import { createTokenController, clearTokenController } from "../controllers/tokenController.js";
 
-const router = require("express").Router();
+import express from "express";
+import tokenController from "../controllers/tokenController.js";
+
+const { createTokenController, clearTokenController } = tokenController;
+
+const router = express.Router();
 
 router.post("/jwt", createTokenController);
 
 router.post("/logout", clearTokenController);
 
-module.exports = router;
+export default router;

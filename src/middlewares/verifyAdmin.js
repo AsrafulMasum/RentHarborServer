@@ -1,4 +1,5 @@
-const User = require("../models/User");
+// const User = require("../models/User");
+import User from "../models/User.js";
 
 
 const verifyAdmin = async (req, res, next) => {
@@ -17,4 +18,4 @@ const verifyAdmin = async (req, res, next) => {
   }
 };
 
-module.exports = verifyAdmin;
+export default verifyAdmin;

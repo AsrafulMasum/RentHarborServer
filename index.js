@@ -1,12 +1,25 @@
-require("dotenv").config();
-const express = require("express");
-const { middlewares } = require("./src/middlewares/defaultMiddlewares");
-const connectDB = require("./src/db/connectDB");
-const tokenApi = require("./src/routes/token");
-const userApi = require("./src/routes/auth");
-const propertiesApi = require("./src/routes/properties");
-const paymentApi = require("./src/routes/payments");
-const logRequests = require("./src/middlewares/loggerMiddleware");
+// require("dotenv").config();
+// const express = require("express");
+// const { middlewares } = require("./src/middlewares/defaultMiddlewares");
+// const connectDB = require("./src/db/connectDB");
+// const tokenApi = require("./src/routes/token");
+// const userApi = require("./src/routes/auth");
+// const propertiesApi = require("./src/routes/properties");
+// const paymentApi = require("./src/routes/payments");
+// const logRequests = require("./src/middlewares/loggerMiddleware");
+
+import dotenv from "dotenv";
+import express from "express";
+
+import  middlewares  from "./src/middlewares/defaultMiddlewares.js";
+import connectDB from "./src/db/connectDB.js";
+import tokenApi from "./src/routes/token.js";
+import userApi from "./src/routes/auth.js";
+import propertiesApi from "./src/routes/properties.js";
+import paymentApi from "./src/routes/payments.js";
+import logRequests from "./src/middlewares/loggerMiddleware.js";
+
+dotenv.config();
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -44,5 +57,3 @@ const main = async () => {
 };
 
 main();
-
-// "type": "module",

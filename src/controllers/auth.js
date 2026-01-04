@@ -1,8 +1,14 @@
-const User = require("../models/User");
-const bcrypt = require("bcryptjs");
-const crypto = require("crypto");
-const { sendVerificationEmail } = require("../ui/email.js");
+// const User = require("../models/User");
+// const bcrypt = require("bcryptjs");
+// const crypto = require("crypto");
+// const { sendVerificationEmail } = require("../ui/email.js");
 
+import User from "../models/User.js";
+import bcrypt from "bcryptjs";
+import crypto from "crypto";
+import { sendVerificationEmail } from "../ui/email.js";
+
+// USER VERIFICATION
 const verifyUserController = async (req, res) => {
   try {
     const { email, code } = req.body;
@@ -39,6 +45,7 @@ const verifyUserController = async (req, res) => {
   }
 };
 
+// RESEND VERIFICATION CODE
 const resendVerificationCodeController = async (req, res) => {
   try {
     const { email } = req.body;
@@ -94,6 +101,7 @@ const resendVerificationCodeController = async (req, res) => {
   }
 };
 
+// FORGOT PASSWORD
 const forgotPasswordController = async (req, res) => {
   try {
     const { email } = req.body;
@@ -115,6 +123,7 @@ const forgotPasswordController = async (req, res) => {
   }
 };
 
+// VERIFY RESET CODE
 const verifyResetCodeController = async (req, res) => {
   try {
     const { email, code } = req.body;
@@ -147,6 +156,7 @@ const verifyResetCodeController = async (req, res) => {
   }
 };
 
+// RESET PASSWORD
 const resetPasswordController = async (req, res) => {
   try {
     const { resetToken, newPassword } = req.body;
@@ -181,6 +191,7 @@ const resetPasswordController = async (req, res) => {
   }
 };
 
+// UPDATE USER DETAILS
 const updateUserDetailsController = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -216,6 +227,7 @@ const updateUserDetailsController = async (req, res) => {
   }
 };
 
+// CHANGE PASSWORD
 const changePasswordController = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -251,6 +263,7 @@ const changePasswordController = async (req, res) => {
   }
 };
 
+// USER REGISTER
 const userRegisterController = async (req, res) => {
   try {
     const { name, email, password, photo_url, role, phone } = req.body;
@@ -298,6 +311,7 @@ const userRegisterController = async (req, res) => {
   }
 };
 
+// USER LOGIN
 const userLoginController = async (req, res) => {
   try {
     const { email, password } = req.body;
@@ -323,6 +337,7 @@ const userLoginController = async (req, res) => {
   }
 };
 
+// GET USER
 const gettingUserController = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -334,6 +349,7 @@ const gettingUserController = async (req, res) => {
   }
 };
 
+// USER WISHLIST
 const userWishlistController = async (req, res) => {
   const userId = req.params.id;
   const { propertyId } = req.body;
@@ -365,6 +381,7 @@ const userWishlistController = async (req, res) => {
   }
 };
 
+// GET ALL USER
 const gettingAllUserController = async (req, res) => {
   try {
     const users = await User.find({ role: { $ne: "Admin" } }).select(
@@ -378,6 +395,7 @@ const gettingAllUserController = async (req, res) => {
   }
 };
 
+// BLOCK USER
 const blockUserController = async (req, res) => {
   try {
     const userId = req.params.id;
@@ -406,6 +424,7 @@ const blockUserController = async (req, res) => {
   }
 };
 
+// UPDATE HOST REQUEST
 const updateHostRequestController = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -447,6 +466,7 @@ const updateHostRequestController = async (req, res) => {
   }
 };
 
+// BECOME A HOST
 const becomeAHostController = async (req, res) => {
   try {
     const { userId } = req.params;
@@ -500,6 +520,7 @@ const becomeAHostController = async (req, res) => {
   }
 };
 
+// GET ALL REQUESTED HOST
 const getAllRequestedHostsController = async (req, res) => {
   try {
     const requestedUsers = await User.find({
@@ -520,6 +541,7 @@ const getAllRequestedHostsController = async (req, res) => {
   }
 };
 
+// UPDATE USER ROLE
 const updateUserRoleController = async (req, res) => {
   const ALLOWED_ROLES = ["Guest", "Host", "Admin"];
 
@@ -563,7 +585,7 @@ const updateUserRoleController = async (req, res) => {
   }
 };
 
-module.exports = {
+export {
   userRegisterController,
   userLoginController,
   gettingUserController,
